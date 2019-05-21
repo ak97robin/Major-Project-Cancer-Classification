@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue May 21 16:52:48 2019
+
+@author: atish
+"""
+
+#importing libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+#importing data
+dataset=pd.read_csv('data.csv')
+dataset.head()
+x=dataset.iloc[:,2:-1].values
+y=dataset.iloc[:,1].values
+
+#cleaning data
+print("Cancer"+format(dataset.shape))
+dataset.isnull().sum()
+dataset.isna().sum()
+
+#encoding malignant and benign into binary data
+from sklearn.preprocessing import LabelEncoder
+labelencode_y=LabelEncoder()
+y=labelencode_y.fit_transform(y)
+print(y)
+
+#splitting dataset
+from sklearn.model_selection import train_test_split
+trainx,testx,trainy,testy=train_test_split(x,y,test_size=0.25,random_state=0)
+
+#feature scaling
+from sklearn.preprocessing import StandardScaler
+sc=StandardScaler()
+trainx=sc.fit_transform(trainx)
+testx=sc.transform(testx)
+
+#fitting model and printing results
+from sklearn.linear_model import LogisticRegression
+classifier=LogisticRegression(random_state=0)
+classifier.fit(trainx,trainy)
+y_pred=classifier.predict(testx)
+print (y_pred)
+
+#confusion matrix
+from sklearn.metrics import confusion_matrix
+cm=confusion_matrix(testy,y_pred)
+trainscore=classifier.score(trainx,trainy)
+
+#printing reports
+from sklearn.metrics import classification_report,accuracy_score
+print (classification_report(testy,y_pred))
+predaccuracyscore=accuracy_score(testy,classifier.predict(testx))
+
+print ("Training score is " + str(trainscore))
+print ("Predicting accuracy score for Logistic Regression is " + str(predaccuracyscore))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
